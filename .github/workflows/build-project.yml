@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.artifact_name.outputs.artifact-name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,5 +25,17 @@ jobs:
           distribution: 'temurin'
 
       - name: Run maven clean install
-        run: mvn clean install -U
+        run: mvn clean install
 
+      - name: Get artifact name
+        id: artifact_name
+        run: |
+          JAR_NAME=$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)
+          echo "artifact-name=${JAR_NAME}.jar" >> $GITHUB_OUTPUT
+
+  output-artifact:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get output artifact name
+        run: echo "${{ needs.build.outputs.artifact-name }}"
