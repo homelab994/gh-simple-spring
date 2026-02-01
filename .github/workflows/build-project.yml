@@ -9,8 +9,14 @@ on:
       - develop
   workflow_dispatch:
 
+env:
+  USERNAME: grusu94
+
 jobs:
   build:
+    if: false
+    env:
+      USR: USER
     runs-on: ubuntu-latest
     outputs:
       artifact-name: ${{ steps.artifact_name.outputs.artifact-name }}
@@ -33,10 +39,26 @@ jobs:
         run: |
           JAR_NAME=$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)
           echo "artifact-name=${JAR_NAME}.jar" >> $GITHUB_OUTPUT
+      - name: Echo vars
+        run: |
+          echo "USERNAME: $USERNAME"
+          echo "USERNAME_: ${{ env.USERNAME }}"
+          echo "USR: ${{ env.USR }}"
 
   output-artifact:
-    needs: build
+    #needs: build
+    environment: DEV
     runs-on: ubuntu-latest
     steps:
       - name: Get output artifact name
         run: echo "${{ needs.build.outputs.artifact-name }}"
+
+      - name: Echo vars
+        run: |
+          echo "USERNAME: $USERNAME"
+          echo "USERNAME_: ${{ env.USERNAME }}"
+          echo "USR: ${{ env.USR }}"
+          echo "REPO_USERNAME: ${{ vars.REPO_USERNAME }}"
+          echo "REPO_SEC***: ${{ secrets.REPO_SECRET }}"
+          echo "ENV_USERNAME: ${{ vars.ENV_USERNAME }}"
+          echo "ENV_SEC***: ${{ secrets.ENV_SECRET }}"
