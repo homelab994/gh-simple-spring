@@ -14,7 +14,6 @@ env:
 
 jobs:
   build:
-    if: false
     env:
       USR: USER
     runs-on: ubuntu-latest
@@ -32,21 +31,34 @@ jobs:
           cache: maven
 
       - name: Run maven clean install
-        run: mvn clean install -B
+        run: mvn clean install -B -DskipTests
 
       - name: Get artifact name
         id: artifact_name
         run: |
           JAR_NAME=$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)
           echo "artifact-name=${JAR_NAME}.jar" >> $GITHUB_OUTPUT
+
       - name: Echo vars
         run: |
           echo "USERNAME: $USERNAME"
           echo "USERNAME_: ${{ env.USERNAME }}"
           echo "USR: ${{ env.USR }}"
 
+      - name: Force failure
+        continue-on-error: true
+        id: force_failure
+        run: |
+          echo "This step will fail"
+          exit 1
+
+      - name: Step after failure
+        #if: failure() && steps.force_failure.outcome == 'failure'
+        run: |
+          echo "Still run after failure"
+
   output-artifact:
-    #needs: build
+    needs: build
     environment: DEV
     runs-on: ubuntu-latest
     steps:
@@ -62,3 +74,13 @@ jobs:
           echo "REPO_SEC***: ${{ secrets.REPO_SECRET }}"
           echo "ENV_USERNAME: ${{ vars.ENV_USERNAME }}"
           echo "ENV_SEC***: ${{ secrets.ENV_SECRET }}"
+
+  report:
+    needs: [build, output-artifact]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output information
+        run: |
+          echo "Something went wrong"
+          echo "${{ toJSON(github) }}"
