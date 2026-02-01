@@ -1,0 +1,22 @@
+name: Simple matrix demo
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        values: [1, 2, 3]
+        operating-system: [ubuntu-latest, windows-latest]
+        include:
+          - values: 9
+            operating-system: ubuntu-latest
+        exclude:
+          - values: 1
+            operating-system: windows-latest
+    runs-on: ${{ matrix.operating-system }}
+    steps:
+      - name: Display combinations
+        run: |
+          echo "${{ matrix.operating-system }} - ${{ matrix.values }}"
