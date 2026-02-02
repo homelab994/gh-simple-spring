@@ -78,9 +78,19 @@ jobs:
   reusable-output:
     needs: output-artifact
     uses: ./.github/workflows/reusable.yml
+    with:
+      artifact-name: ${{ needs.build.outputs.artifact-name }}
+
+  print-reusable-outcome:
+    needs: reusable-output
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print outcome
+        run: |
+          echo "${{ needs.reusable-output.outputs.result }}"
 
   report:
-    needs: [build, output-artifact]
+    needs: [ build, output-artifact ]
     if: failure()
     runs-on: ubuntu-latest
     steps:
