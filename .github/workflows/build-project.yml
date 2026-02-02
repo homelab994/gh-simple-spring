@@ -75,6 +75,10 @@ jobs:
           echo "ENV_USERNAME: ${{ vars.ENV_USERNAME }}"
           echo "ENV_SEC***: ${{ secrets.ENV_SECRET }}"
 
+  reusable-output:
+    needs: output-artifact
+    uses: ./.github/workflows/reusable.yml
+
   report:
     needs: [build, output-artifact]
     if: failure()
