@@ -1,0 +1,35 @@
+name: Reusable workflow
+
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: The name of the artifact
+        required: false
+        default: distribution
+        type: string
+      username:
+        description: The username
+        required: false
+        default: username
+        type: string
+
+    outputs:
+      result:
+        description: The result of the operation
+        value: ${{ jobs.output-info.outputs.outcome }}
+
+jobs:
+  output-info:
+    outputs:
+      outcome: ${{ steps.set-result.outputs.step-result}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Input information
+        run: |
+          echo "Output ${{ vars.REPO_USERNAME }}"
+
+      - name: Output information
+        id: set-result
+        run: |
+          echo "step-result=success" >> $GITHUB_OUTPUT
