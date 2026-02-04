@@ -89,6 +89,10 @@ jobs:
         run: |
           echo "${{ needs.reusable-output.outputs.result }}"
 
+  container-run:
+    needs: print-reusable-outcome
+    uses: ./.github/workflows/container-testing.yml
+
   report:
     needs: [ build, output-artifact ]
     if: failure()
