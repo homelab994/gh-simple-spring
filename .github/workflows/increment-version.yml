@@ -46,5 +46,5 @@ jobs:
           
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git commit -am "Increment version to $NEW_VERSION"
+          git commit -am "[skip ci] Increment version to $NEW_VERSION"
           git push origin ${{ inputs.branch-name }}
