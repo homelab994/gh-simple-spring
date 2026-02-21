@@ -47,4 +47,4 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git commit -am "Increment version to $NEW_VERSION"
-          git push --force origin ${{ inputs.branch-name }}
+          git push origin ${{ inputs.branch-name }}
