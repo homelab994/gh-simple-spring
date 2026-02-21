@@ -1,0 +1,60 @@
+name: 'Extract artifact version'
+description: 'Extract and retrieve artifact version'
+
+inputs:
+  java-version:
+    description: "Java version to install"
+    required: false
+    default: "17"
+  distribution:
+    description: "Java distribution"
+    required: false
+    default: "temurin"
+  pom-path:
+    description: "Path to pom.xml"
+    required: false
+    default: "pom.xml"
+
+outputs:
+  artifact-id:
+    description: "Spring Boot artifactId"
+    value: ${{ steps.extract.outputs.artifact-id }}
+  version:
+    description: "Spring Boot version"
+    value: ${{ steps.extract.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: ${{ inputs.distribution }}
+        cache: maven
+
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v5
+      with:
+        maven-version: 3.9.6
+
+    - name: Extract artifactId and version
+      id: extract
+      shell: bash
+      run: |
+        ARTIFACT_ID=$(mvn -q \
+          -Dexec.executable=echo \
+          -Dexec.args='${project.artifactId}' \
+          --non-recursive \
+          -f ${{ inputs.pom-path }} \
+          exec:exec)
+        
+        VERSION=$(mvn -q \
+          -Dexec.executable=echo \
+          -Dexec.args='${project.version}' \
+          --non-recursive \
+          -f ${{ inputs.pom-path }} \
+          exec:exec)
+        
+        echo "artifact-id=$ARTIFACT_ID" >> "$GITHUB_OUTPUT"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"

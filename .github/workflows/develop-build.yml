@@ -1,0 +1,20 @@
+name: Develop build
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  prepare:
+    uses: ./.github/workflows/prepare-build.yml
+
+  build:
+    needs: prepare
+    uses: ./.github/workflows/build-analyze.yml
+    with:
+      artifact-version: ${{ needs.prepare.outputs.artifact-version }}
+
+  increment:
+    needs: build
+    uses: ./.github/workflows/increment-version.yml
