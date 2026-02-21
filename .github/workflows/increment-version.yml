@@ -9,6 +9,9 @@ on:
         type: string
         default: 'develop'
 
+permissions:
+  contents: write
+
 jobs:
   increment-version:
     runs-on: ubuntu-latest
