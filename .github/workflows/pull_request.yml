@@ -1,0 +1,17 @@
+name: Pull request
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  prepare:
+    uses: ./.github/workflows/prepare-build.yml
+
+  build:
+    needs: prepare
+    uses: ./.github/workflows/build-analyze.yml
+    with:
+      artifact-version: ${{ needs.prepare.outputs.artifact-version }}

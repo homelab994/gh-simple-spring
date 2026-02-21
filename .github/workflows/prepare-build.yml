@@ -1,0 +1,38 @@
+name: Prepare build
+
+on:
+  workflow_call:
+    outputs:
+      artifact-version:
+        description: 'Artifact version'
+        value: ${{ jobs.prepare-build.outputs.artifact-version }}
+
+jobs:
+  prepare-build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-version: ${{ steps.get_artifact_version.outputs.artifact-version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Remove SNAPSHOT
+        run: |
+          mvn build-helper:parse-version versions:set \
+            -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} \
+            versions:commit
+
+      - name: Get artifact version
+        id: get_artifact_version
+        run: |
+          ARTIFACT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "artifact-version=$ARTIFACT_VERSION" >> $GITHUB_OUTPUT

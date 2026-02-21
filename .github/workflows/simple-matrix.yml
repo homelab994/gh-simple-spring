@@ -1,7 +1,8 @@
 name: Simple matrix demo
 
 on:
-  pull_request:
+#  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
