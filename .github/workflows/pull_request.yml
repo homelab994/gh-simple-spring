@@ -9,9 +9,11 @@ on:
 jobs:
   prepare:
     uses: ./.github/workflows/prepare-build.yml
+    secrets: inherit
 
   build:
     needs: prepare
     uses: ./.github/workflows/build-analyze.yml
     with:
       artifact-version: ${{ needs.prepare.outputs.artifact-version }}
+    secrets: inherit
