@@ -2,7 +2,7 @@ name: Monthly Version Reset
 
 on:
   schedule:
-    - cron: '0 10 22 * *'
+    - cron: '0 0 1 * *'
   workflow_dispatch:
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
 
       - name: Commit monthly reset
         run: |
-          VERSION = ${{ steps.new_month_version.outputs.new-version }}
+          VERSION=${{ steps.new_month_version.outputs.new-version }}
           
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
