@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.github.grusu94</groupId>
 	<artifactId>gh-simple-spring</artifactId>
-	<version>26.2.5-SNAPSHOT</version>
+	<version>26.2.6-SNAPSHOT</version>
 	<name>gh-simple-spring</name>
 	<description>Simple project working with github-actions</description>
 
