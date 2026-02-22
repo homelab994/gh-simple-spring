@@ -61,12 +61,11 @@ jobs:
       matrix:
         host: ${{ fromJson(needs.prepare.outputs.hosts) }}
 
-    if: |
-      github.event.inputs.target == 'all' ||
-      github.event.inputs.target == matrix.host
-
     steps:
       - name: Deploy to ${{ matrix.host }}
+        if: |
+          github.event.inputs.target == 'all' ||
+          github.event.inputs.target == matrix.host
         run: |
           echo "HOSTS: ${{ matrix.host }}
 #        uses: appleboy/ssh-action@v1
