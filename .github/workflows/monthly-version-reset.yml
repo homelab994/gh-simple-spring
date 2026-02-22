@@ -34,7 +34,7 @@ jobs:
         id: new_month_version
         run: |
           YEAR=$(date -u +%y)
-          MONTH=$(date -u +%m)
+          MONTH=$(date -u +%-m)
           NEW_VERSION="$YEAR.$MONTH.0-SNAPSHOT"
           mvn build-helper:parse-version versions:set \
             -DnewVersion=$NEW_VERSION \
