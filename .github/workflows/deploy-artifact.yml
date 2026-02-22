@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       hosts: ${{ steps.hosts-list.outputs.hosts }}
-      hosts-present: ${{ steps.hosts-list.outputs.hosts-present }}
+      hosts-empty: ${{ steps.hosts-list.outputs.hosts-empty }}
     steps:
       - id: hosts-list
         run: |
@@ -78,30 +78,27 @@ jobs:
           fi
           
           if [ "$HOSTS" = "[]" ]; then
-            echo "No hosts available for selection."
-            echo "hosts-present=true" >> $GITHUB_OUTPUT
+            echo "No hosts available in environment: $ENV for selection: $TARGET"
+            echo "hosts-empty=true" >> $GITHUB_OUTPUT
           else
-            echo "hosts-present=false" >> $GITHUB_OUTPUT
+            echo "hosts-empty=false" >> $GITHUB_OUTPUT
           fi
           
           echo "hosts=$HOSTS" >> $GITHUB_OUTPUT
 
   deploy:
     needs: prepare
-    if: needs.prepare.outputs.hosts-present != 'true'
+    if: needs.prepare.outputs.hosts-empty != 'true'
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
 
     strategy:
-      max-parallel: 2
+      max-parallel: 1
       matrix:
         host: ${{ fromJson(needs.prepare.outputs.hosts) }}
 
     steps:
       - name: Deploy to ${{ matrix.host }}
-        if: |
-          github.event.inputs.target == 'all' ||
-          github.event.inputs.target == matrix.host
         run: |
           echo "HOSTS: ${{ matrix.host }}
 #        uses: appleboy/ssh-action@v1
