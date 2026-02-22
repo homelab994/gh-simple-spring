@@ -36,9 +36,10 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      hosts: ${{ steps.hosts-map.outputs.hosts }}
+      hosts: ${{ steps.hosts-list.outputs.hosts }}
+      hosts-present: ${{ steps.hosts-list.outputs.hosts-present }}
     steps:
-      - id: hosts-map
+      - id: hosts-list
         run: |
           ENV="${{ github.event.inputs.environment }}"
           TARGET="${{ github.event.inputs.target }}"
@@ -76,10 +77,18 @@ jobs:
             HOSTS=$(jq -c -n "$PRIMARY + $BACKUP + $STANDALONE")
           fi
           
+          if [ "$HOSTS" = "[]" ]; then
+            echo "No hosts available for selection."
+            echo "hosts-present=true" >> $GITHUB_OUTPUT
+          else
+            echo "hosts-present=false" >> $GITHUB_OUTPUT
+          fi
+          
           echo "hosts=$HOSTS" >> $GITHUB_OUTPUT
 
   deploy:
     needs: prepare
+    if: needs.prepare.outputs.hosts-present != 'true'
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
 
