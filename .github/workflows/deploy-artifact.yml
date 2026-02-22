@@ -24,32 +24,57 @@ on:
         required: true
       target:
         description: 'Specify host or all'
+        type: choice
+        options:
+          - All
+          - Primary
+          - Backup
+          - Standalone
         required: true
-        type: string
-        default: 'all'
 
 jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      hosts: ${{ steps.set-hosts.outputs.hosts }}
+      hosts: ${{ steps.hosts-map.outputs.hosts }}
     steps:
-      - id: set-hosts
+      - id: hosts-map
         run: |
-          case "${{ github.event.inputs.environment }}" in
+          ENV="${{ github.event.inputs.environment }}"
+          TARGET="${{ github.event.inputs.target }}"
+
+          case "$ENV" in
             dev)
-              HOSTS='["dev.company.com"]'
+              PRIMARY='["dev1.company.com"]'
+              BACKUP='[]'
+              STANDALONE='[]'
               ;;
             int)
-              HOSTS='["int1.company.com","int2.company.com"]'
+              PRIMARY='["int1.company.com"]'
+              BACKUP='["int2.company.com"]'
+              STANDALONE='[]'
               ;;
             preprod)
-              HOSTS='["preprod1.company.com","preprod2.company.com"]'
+              PRIMARY='["preprod1.company.com"]'
+              BACKUP='["preprod2.company.com"]'
+              STANDALONE='["preprod3.company.com"]'
               ;;
             prod)
-              HOSTS='["prod1.company.com","prod2.company.com"]'
+              PRIMARY='["prod1.company.com"]'
+              BACKUP='["prod2.company.com"]'
+              STANDALONE='["prod3.company.com"]'
               ;;
           esac
+          
+          if [ "$TARGET" = "Primary" ]; then
+            HOSTS=$PRIMARY
+          elif [ "$TARGET" = "Backup" ]; then
+            HOSTS=$BACKUP
+          elif [ "$TARGET" = "Standalone" ]; then
+            HOSTS=$STANDALONE
+          else
+            HOSTS=$(jq -c -n "$PRIMARY + $BACKUP + $STANDALONE")
+          fi
           
           echo "hosts=$HOSTS" >> $GITHUB_OUTPUT
 
@@ -69,7 +94,7 @@ jobs:
           github.event.inputs.target == 'all' ||
           github.event.inputs.target == matrix.host
         run: |
-          echo "HOSTS: ${{ matrix.host }}"
+          echo "HOSTS: ${{ matrix.host }}
 #        uses: appleboy/ssh-action@v1
 #        with:
 #          host: ${{ matrix.host }}
