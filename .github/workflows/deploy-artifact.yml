@@ -1,0 +1,81 @@
+name: Deploy artifact
+
+on:
+  workflow_dispatch:
+    inputs:
+      artifact-name:
+        description: 'Artifact name'
+        type: string
+        required: true
+      artifact-version:
+        description: 'Artifact version'
+        type: string
+        required: true
+      environment:
+        description: 'Target environment'
+        type: choice
+        options:
+          - dev
+          - int
+          - preprod
+          - prod
+        required: true
+      target:
+        description: 'Specify host or all'
+        required: true
+        type: string
+        default: 'all'
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      hosts: ${{ steps.set-hosts.outputs.hosts }}
+    steps:
+      - id: set-hosts
+        run: |
+          case "${{ github.event.inputs.environment }}" in
+            dev)
+              HOSTS='["dev.company.com"]'
+              ;;
+            int)
+              HOSTS='["int1.company.com","int2.company.com"]'
+              ;;
+            preprod)
+              HOSTS='["preprod1.company.com","preprod2.company.com"]'
+              ;;
+            prod)
+              HOSTS='["prod1.company.com","prod2.company.com"]'
+              ;;
+          esac
+          
+          echo "hosts=$HOSTS" >> $GITHUB_OUTPUT
+
+  deploy:
+    needs: prepare
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    strategy:
+      max-parallel: 2
+      matrix:
+        host: ${{ fromJson(needs.prepare.outputs.hosts) }}
+
+    if: |
+      github.event.inputs.target == 'all' ||
+      github.event.inputs.target == matrix.host
+
+    steps:
+      - name: Deploy to ${{ matrix.host }}
+        run: |
+          echo "HOSTS: ${{ matrix.host }}
+#        uses: appleboy/ssh-action@v1
+#        with:
+#          host: ${{ matrix.host }}
+#          username: deploy
+#          key: ${{ secrets.SSH_KEY }}
+#          script: |
+#            /opt/myapp/deploy.sh \
+#              ${{ github.event.inputs.artifact-name }} \
+#              ${{ github.event.inputs.artifact-version }} \
+#              ${{ github.event.inputs.environment }}
