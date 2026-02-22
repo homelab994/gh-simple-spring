@@ -100,7 +100,7 @@ jobs:
     steps:
       - name: Deploy to ${{ matrix.host }}
         run: |
-          echo "HOSTS: ${{ matrix.host }}
+          echo "HOSTS: ${{ matrix.host }}"
 #        uses: appleboy/ssh-action@v1
 #        with:
 #          host: ${{ matrix.host }}
