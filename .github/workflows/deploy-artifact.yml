@@ -5,7 +5,9 @@ on:
     inputs:
       artifact-name:
         description: 'Artifact name'
-        type: string
+        type: choice
+        options:
+          - gh-simple-spring
         required: true
       artifact-version:
         description: 'Artifact version'
@@ -67,7 +69,7 @@ jobs:
           github.event.inputs.target == 'all' ||
           github.event.inputs.target == matrix.host
         run: |
-          echo "HOSTS: ${{ matrix.host }}
+          echo "HOSTS: ${{ matrix.host }}"
 #        uses: appleboy/ssh-action@v1
 #        with:
 #          host: ${{ matrix.host }}
