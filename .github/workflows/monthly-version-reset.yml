@@ -47,7 +47,6 @@ jobs:
           
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git commit -am "Increment version to $VERSION"
           
-          git commit -am "Monthly version reset $VERSION [skip-cd]"
+          git commit -am "Monthly version increment $VERSION [skip-cd]"
           git push origin develop
