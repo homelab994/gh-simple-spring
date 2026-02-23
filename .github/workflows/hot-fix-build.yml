@@ -20,7 +20,7 @@ jobs:
     secrets: inherit
 
   increment:
-    needs: build
+    needs: [prepare, build]
     uses: ./.github/workflows/increment-version.yml
     with:
       branch-name: 'master'
