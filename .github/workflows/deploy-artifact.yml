@@ -9,8 +9,8 @@ on:
         options:
           - gh-simple-spring
         required: true
-      artifact-version:
-        description: 'Artifact version'
+      release-version:
+        description: 'Release version'
         type: string
         required: true
       environment:
@@ -109,5 +109,5 @@ jobs:
 #          script: |
 #            /opt/myapp/deploy.sh \
 #              ${{ github.event.inputs.artifact-name }} \
-#              ${{ github.event.inputs.artifact-version }} \
+#              ${{ github.event.inputs.release-version }} \
 #              ${{ github.event.inputs.environment }}

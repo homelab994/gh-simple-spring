@@ -3,8 +3,8 @@ name: Build analyze
 on:
   workflow_call:
     inputs:
-      artifact-version:
-        description: "Artifact version"
+      release-version:
+        description: "Release version"
         required: true
         type: string
 
@@ -39,9 +39,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Set maven version
+      - name: Set release version
         run: |
-          mvn versions:set -DnewVersion=${{ inputs.artifact-version }}
+          mvn versions:set -DnewVersion=${{ inputs.release-version }}
 
       - name: Build project
         run: mvn clean install

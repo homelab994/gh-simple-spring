@@ -15,5 +15,5 @@ jobs:
     needs: prepare
     uses: ./.github/workflows/build-analyze.yml
     with:
-      artifact-version: ${{ needs.prepare.outputs.artifact-version }}
+      release-version: ${{ needs.prepare.outputs.release-version }}
     secrets: inherit
