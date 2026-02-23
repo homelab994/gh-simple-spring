@@ -48,5 +48,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           
-          git commit -am "[skip-ci] v$VERSION released"
+          git commit -am "v$VERSION released [skip ci]"
           git push origin develop
