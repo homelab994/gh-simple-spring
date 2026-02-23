@@ -8,6 +8,15 @@ on:
         required: false
         type: string
         default: 'develop'
+      build-type:
+        description: 'Build type'
+        required: false
+        type: string
+        default: 'release-candidate'
+      release-version:
+        description: "Release version"
+        required: true
+        type: string
 
 jobs:
   increment-version:
@@ -23,8 +32,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch-name }}
-          fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Set up JDK 17
@@ -34,10 +41,20 @@ jobs:
           java-version: 17
           cache: maven
 
-      - name: Increment version
+      # Release candidate flow
+      - name: Set release version (RC flow)
+        if: inputs.build-type == 'release-candidate'
         run: |
           mvn build-helper:parse-version versions:set \
             -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT \
+            versions:commit
+
+      # Hotfix flow
+      - name: Set release version (HF flow)
+        if: inputs.build-type == 'hot-fix'
+        run: |
+          mvn build-helper:parse-version versions:set \
+            -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}-\${parsedVersion.nextBuildNumber} \
             versions:commit
 
       - name: Commit new snapshot
@@ -46,5 +63,5 @@ jobs:
           
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git commit -am "[skip ci] Increment version to $NEW_VERSION"
+          git commit -am "v${{ inputs.release-version }} released [skip-cd]"
           git push origin ${{ inputs.branch-name }}

@@ -3,11 +3,13 @@ name: Develop build
 on:
   push:
     branches:
-      - develop
+      - master
 
 jobs:
   prepare:
     uses: ./.github/workflows/prepare-build.yml
+    with:
+      build-type: 'hotfix'
     secrets: inherit
 
   build:
@@ -21,5 +23,7 @@ jobs:
     needs: build
     uses: ./.github/workflows/increment-version.yml
     with:
+      branch-name: 'master'
+      build-type: 'hotfix'
       release-version: ${{ needs.prepare.outputs.release-version }}
     secrets: inherit

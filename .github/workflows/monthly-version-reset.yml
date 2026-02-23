@@ -31,22 +31,22 @@ jobs:
           cache: maven
 
       - name: Reset to new month version
-        id: new_month_version
+        id: new-month-version
         run: |
           YEAR=$(date -u +%y)
           MONTH=$(date -u +%-m)
-          NEW_VERSION="$YEAR.$MONTH.0-SNAPSHOT"
+          NEW_VERSION="$YEAR.$MONTH.0"
           mvn build-helper:parse-version versions:set \
-            -DnewVersion=$NEW_VERSION \
+            -DnewVersion=$NEW_VERSION-SNAPSHOT \
             versions:commit
           echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Commit monthly reset
         run: |
-          VERSION=${{ steps.new_month_version.outputs.new-version }}
+          VERSION=${{ steps.new-month-version.outputs.new-version }}
           
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           
-          git commit -am "Monthly version increment $VERSION [skip-cd]"
+          git commit -am "v$VERSION released [skip-cd]"
           git push origin develop
