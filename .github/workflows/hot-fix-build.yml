@@ -27,3 +27,11 @@ jobs:
       build-type: 'hotfix'
       release-version: ${{ needs.prepare.outputs.release-version }}
     secrets: inherit
+
+  deploy-preprod:
+    needs: [ prepare, increment ]
+    uses: homelab994/gh-newops/.github/workflows/deploy-artifact.yml@develop
+    with:
+      artifact-name: 'gh-simple-spring'
+      release-version: ${{ needs.prepare.outputs.release-version }}
+      environment: 'preprod'
