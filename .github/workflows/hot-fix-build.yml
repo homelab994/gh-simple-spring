@@ -37,7 +37,7 @@ jobs:
       environment: 'preprod'
 
   update-manifest:
-    needs: [ deploy-preprod ]
+    needs: [ prepare, deploy-preprod ]
     uses: homelab994/gh-newops/.github/workflows/update-manifest.yml@develop
     with:
       artifact-name: 'gh-simple-spring'
