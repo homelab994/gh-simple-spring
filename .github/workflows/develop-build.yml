@@ -33,10 +33,15 @@ jobs:
       environment: 'dev'
 
   update-manifest:
-    needs: [prepare, deploy-dev]
-    uses: homelab994/gh-newops/.github/workflows/update-manifest.yml@develop
-    with:
-      artifact-name: 'gh-simple-spring'
-      release-version: ${{ needs.prepare.outputs.release-version }}
-      environment: 'dev'
-    secrets: inherit
+    needs: [ prepare, deploy-preprod ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger gh-newops workflow
+        run: |
+          gh workflow run update-manifest-dispatch.yml \
+            -R homelab994/gh-newops \
+            --ref develop \
+            -f artifact-name=${{ github.event.repository.name }} \
+            -f release-version=${{ needs.prepare.outputs.release-version }} \
+            -f environment=dev
