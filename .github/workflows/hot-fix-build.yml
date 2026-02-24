@@ -35,3 +35,12 @@ jobs:
       artifact-name: 'gh-simple-spring'
       release-version: ${{ needs.prepare.outputs.release-version }}
       environment: 'preprod'
+
+  update-manifest:
+    needs: [ deploy-preprod ]
+    uses: homelab994/gh-newops/.github/workflows/update-manifest.yml@develop
+    with:
+      artifact-name: 'gh-simple-spring'
+      release-version: ${{ needs.prepare.outputs.release-version }}
+      environment: 'preprod'
+    secrets: inherit
