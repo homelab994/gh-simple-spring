@@ -33,7 +33,7 @@ jobs:
       environment: 'dev'
 
   update-manifest:
-    needs: [ prepare, deploy-preprod ]
+    needs: [ prepare, deploy-dev ]
     runs-on: ubuntu-latest
 
     steps:
