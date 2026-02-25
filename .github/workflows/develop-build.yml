@@ -31,3 +31,4 @@ jobs:
       artifact-name: 'gh-simple-spring'
       release-version: ${{ needs.prepare.outputs.release-version }}
       environment: 'dev'
+    secrets: inherit
