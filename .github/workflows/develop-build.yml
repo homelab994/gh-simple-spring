@@ -5,9 +5,6 @@ on:
     branches:
       - develop
 
-permissions:
-  contents: write
-
 jobs:
   prepare:
     uses: homelab994/gh-newops/.github/workflows/prepare-build.yml@develop
