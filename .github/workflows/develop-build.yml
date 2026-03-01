@@ -5,6 +5,9 @@ on:
     branches:
       - develop
 
+permissions:
+  contents: write
+
 jobs:
   prepare:
     uses: homelab994/gh-newops/.github/workflows/prepare-build.yml@develop
@@ -19,7 +22,7 @@ jobs:
 
   increment:
     needs: [prepare, build]
-    uses: homelab994/gh-newops/.github/workflows/increment-version.yml@develop
+    uses: homelab994/gh-newops/.github/workflows/increment-patch-version.yml@develop
     with:
       release-version: ${{ needs.prepare.outputs.release-version }}
     secrets: inherit

@@ -21,7 +21,7 @@ jobs:
 
   increment:
     needs: [prepare, build]
-    uses: homelab994/gh-newops/.github/workflows/increment-version.yml@develop
+    uses: homelab994/gh-newops/.github/workflows/increment-patch-version.yml@develop
     with:
       branch-name: 'master'
       build-type: 'hotfix'
