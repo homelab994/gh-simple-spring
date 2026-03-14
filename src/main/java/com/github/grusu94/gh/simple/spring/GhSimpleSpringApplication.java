@@ -1,4 +1,4 @@
-package com.github.grusu94.gh_simple_spring;
+package com.github.grusu94.gh.simple.spring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

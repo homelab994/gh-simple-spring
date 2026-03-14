@@ -1,4 +1,4 @@
-package com.github.grusu94.gh_simple_spring.controller;
+package com.github.grusu94.gh.simple.spring.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
